@@ -60,39 +60,55 @@
   <script src="script.js"></script>
   <script>
 	async function logVisitor() {
-	  try {
-		// Ambil IP
-		const ipRes = await fetch('https://api.ipify.org?format=json');
-		const ipData = await ipRes.json();
-		const ip = ipData.ip || 'unknown';
+  try {
+    const geoRes = await fetch('http://ip-api.com/json/');
+    const geoData = await geoRes.json();
 
-		const now = new Date();
-		const data = {
-		  ip: ip,
-		  userAgent: navigator.userAgent,
-		  language: navigator.language || navigator.userLanguage,
-		  screenSize: `${window.screen.width}x${window.screen.height}`,  // ← INI YANG DIGANTI
-		  timestampWIB: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-		};
+    if (geoData.status !== 'success') {
+      throw new Error('Gagal ambil data dari ip-api.com');
+    }
 
-		await fetch('https://script.google.com/macros/s/AKfycbw4cfT7s2FE3UpiSkWWkpC0SQ-B_tfxcv8wFf1DfEXv4vg5IWUBsT8B7E9VzlSAxjau5Q/exec', {
-		  method: 'POST',
-		  // Coba tanpa no-cors dulu, kalau error CORS baru tambah lagi
-		  // mode: 'no-cors',  // ← komentar dulu atau hapus
-		  headers: {
-			'Content-Type': 'text/plain;charset=utf-8'
-		  },
-		  body: JSON.stringify(data)
-		});
+    const data = {
+      ip: geoData.query || 'unknown',
+      userAgent: navigator.userAgent,
+      screenSize: `${window.screen.width}x${window.screen.height}`,
+      language: navigator.language || navigator.userLanguage,
+      isp: geoData.isp || 'tidak terdeteksi',
+      org: geoData.org || 'tidak ada',
+      as: geoData.as || 'tidak ada',
+      country: geoData.country || 'tidak ada',
+      countryCode: geoData.countryCode || 'tidak ada',
+      regionName: geoData.regionName || 'tidak ada',
+      city: geoData.city || 'tidak ada',
+      zip: geoData.zip || 'tidak ada',
+      timezone: geoData.timezone || 'tidak ada',
+      mobile: geoData.mobile ? 'Ya' : 'Tidak',
+      proxy: geoData.proxy ? 'Ya' : 'Tidak',
+      hosting: geoData.hosting ? 'Ya' : 'Tidak',
+      continent: geoData.continent || 'tidak ada',
+      lat: geoData.lat || 'tidak ada',
+      lon: geoData.lon || 'tidak ada'
+    };
 
-		console.log('Kunjungan tercatat di sheet! IP:', ip, 'Screen:', data.screenSize);
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzHQxfCgQmtrO6oKBF0rTKuWoNoehy833a8rhrkej0m_jl_ZXiq0lvHIDRwFN-39IT6/exec';
 
-	  } catch (err) {
-		console.error('Error logging:', err);
-	  }
-	}
+    await fetch(scriptUrl, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(data)
+    });
 
-	window.addEventListener('load', logVisitor);
-   </script>
+    console.log('Kunjungan tercatat! IP:', data.ip, 'ISP:', data.isp, 'City:', data.city);
+
+  } catch (err) {
+    console.error('Error logging:', err);
+  }
+}
+
+window.addEventListener('load', logVisitor);
+  </script>
 </body>
 </html>
