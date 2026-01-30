@@ -75,12 +75,14 @@
         timestampWIB: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
       };
 
-      const response = await fetch('https://script.google.com/macros/s/AKfycbxMtjTf7FZOhi8JXRQ88c5sfi7UGxeAEHjbrNZoLFe8w4HsCOQOCz1kaKTtrfId3eQHKg/exec', {
-        method: 'POST',
-        mode: 'no-cors',  // Penting biar work di GitHub Pages
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+	  const response = await fetch('https://script.google.com/macros/s/AKfycbxMtjTf7FZOhi8JXRQ88c5sfi7UGxeAEHjbrNZoLFe8w4HsCOQOCz1kaKTtrfId3eQHKg/exec', {
+	    method: 'POST',
+	    mode: 'no-cors',
+	    headers: {
+		  'Content-Type': 'text/plain;charset=utf-8'   // ← INI KUNCI NYA
+	    },
+	    body: JSON.stringify(data)
+	  });
 
       console.log('Kunjungan tercatat ke Google Sheets!');
     } catch (err) {
