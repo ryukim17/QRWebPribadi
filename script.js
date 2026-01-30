@@ -38,7 +38,7 @@ document.getElementById("infoBtn").addEventListener("click", () => {
       // referrer: document.referrer || "direct"  // opsional
     })
     .then((docRef) => {
-      console.log("Kunjungan tercatat! ID:", docRef.id);
+      console.log("Kunjungan tercatat di firebas! ID:", docRef.id);
     })
     .catch((error) => {
       console.error("Gagal simpan log:", error);
