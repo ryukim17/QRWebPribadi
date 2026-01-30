@@ -58,5 +58,37 @@
     <p>&copy; 2026 Izzudin &bull; QR Identity System</p>
   </footer>
   <script src="script.js"></script>
+  <script>
+  async function logVisitor() {
+    try {
+      // Ambil IP (opsional, tetap pakai ipify)
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      const ip = ipData.ip;
+
+      const now = new Date();
+      const data = {
+        ip: ip,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenSize: `${window.screen.width}x${window.screen.height}`,
+        timestampWIB: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+      };
+
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxMtjTf7FZOhi8JXRQ88c5sfi7UGxeAEHjbrNZoLFe8w4HsCOQOCz1kaKTtrfId3eQHKg/exec', {
+        method: 'POST',
+        mode: 'no-cors',  // Penting biar work di GitHub Pages
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      console.log('Kunjungan tercatat ke Google Sheets!');
+    } catch (err) {
+      console.error('Error logging:', err);
+    }
+  }
+
+  window.addEventListener('load', logVisitor);
+	</script>
 </body>
 </html>
