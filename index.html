@@ -3,16 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Izzudin &sdot; Digital Identity</title>
-  <link rel="stylesheet" href="style.css">  
-  <!-- Firebase App (wajib dulu) -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <title>Izzudin · Digital Identity</title>
 
-  <!-- Firebase Firestore (untuk logging data) -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <!-- FONT AWESOME FREE -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Opsional: Analytics kalau kamu mau track lebih lanjut, tapi skip dulu kalau cuma logging -->
-  <!-- <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics-compat.js"></script> -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -21,15 +18,23 @@
       <span class="dot"></span>
       <strong>Izzudin</strong>
     </div>
-    <div class="status">
-      <span class="status-dot"></span>
-      <span>Identified</span>
-    </div>
+    
+<!-- STATUS -->
+<div class="status" id="status">
+  <div id="lottieStatus" class="lottie-box"></div>
+
+  <span class="pulse-dot"></span>
+  <span class="status-text">Identified</span>
+</div>
+
+<!-- LOTTIE WEB -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
   </header>
 
   <main class="container">
-    <section class="card fade-in">
-      <div class="profile">
+    <section class="card" id="card">
+
+      <div class="profile-box animate">
         <img src="img/img.jpg" alt="Izzudin">
         <div>
           <h2>Izzudin Hadi Prasetio</h2>
@@ -37,79 +42,56 @@
         </div>
       </div>
 
-      <h1>
-        Barang ini<br>
-        <span>milik Izzudin</span>
-      </h1>
+      <div class="content-box">
+        <h1 class="animate delay-1">
+          Barang ini<br>
+          <span>milik Izzudin</span>
+        </h1>
 
-      <p class="desc">
-        Halaman ini digunakan sebagai identitas kepemilikan barang pribadi.
-        Jika Anda menemukan barang ini, silakan hubungi pemilik.
-      </p>
+        <p class="desc animate delay-2">
+          Halaman ini digunakan sebagai identitas kepemilikan barang pribadi.
+          Jika Anda menemukan barang ini, silakan hubungi pemilik.
+        </p>
 
-      <div class="actions">
-        <a href="https://wa.me/6285848442509" class="btn primary">Hubungi Pemilik</a>
-        <button class="btn ghost" id="infoBtn">Info</button>
+        <div class="actions animate delay-3">
+          <a href="https://wa.me/6285848442509" class="btn primary">
+            Hubungi Pemilik
+          </a>
+          <button class="btn ghost" id="infoBtn">
+            Info
+          </button>
+        </div>
       </div>
+
+      <div class="card-footer animate delay-4">
+        &copy; 2026 Izzudin • QR Identity System
+      </div>
+
     </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 Izzudin &bull; QR Identity System</p>
-  </footer>
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <i class="fa-solid fa-circle-info"></i>
+        <h3>Informasi</h3>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          QR ini berfungsi sebagai identitas kepemilikan barang pribadi.
+          Jika Anda menemukan barang ini, silakan menghubungi pemilik.
+        </p>
+        <p>
+          Demi keamanan, kunjungan ke halaman ini dapat tercatat oleh sistem.
+        </p>
+      </div>
+
+      <button class="btn primary" id="closeModal">Mengerti</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
-  <script>
-	async function logVisitor() {
-  try {
-    const geoRes = await fetch('http://ip-api.com/json/');
-    const geoData = await geoRes.json();
-
-    if (geoData.status !== 'success') {
-      throw new Error('Gagal ambil data dari ip-api.com');
-    }
-
-    const data = {
-      ip: geoData.query || 'unknown',
-      userAgent: navigator.userAgent,
-      screenSize: `${window.screen.width}x${window.screen.height}`,
-      language: navigator.language || navigator.userLanguage,
-      isp: geoData.isp || 'tidak terdeteksi',
-      org: geoData.org || 'tidak ada',
-      as: geoData.as || 'tidak ada',
-      country: geoData.country || 'tidak ada',
-      countryCode: geoData.countryCode || 'tidak ada',
-      regionName: geoData.regionName || 'tidak ada',
-      city: geoData.city || 'tidak ada',
-      zip: geoData.zip || 'tidak ada',
-      timezone: geoData.timezone || 'tidak ada',
-      mobile: geoData.mobile ? 'Ya' : 'Tidak',
-      proxy: geoData.proxy ? 'Ya' : 'Tidak',
-      hosting: geoData.hosting ? 'Ya' : 'Tidak',
-      continent: geoData.continent || 'tidak ada',
-      lat: geoData.lat || 'tidak ada',
-      lon: geoData.lon || 'tidak ada'
-    };
-
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbyRsSBAkS6rGuJj9Nx3MP0W0RwRz0-Vl2N4R5lKxOdz25NjyYGxCiyvKwXOv9ioNvXMFg/exec';
-
-    await fetch(scriptUrl, {
-      method: 'POST',
-      redirect: 'follow',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(data)
-    });
-
-    console.log('Kunjungan tercatat! IP:', data.ip, 'ISP:', data.isp, 'City:', data.city);
-
-  } catch (err) {
-    console.error('Error logging:', err);
-  }
-}
-
-window.addEventListener('load', logVisitor);
-  </script>
 </body>
 </html>
-
